@@ -6,7 +6,7 @@ pipeline {
         DOCKERHUB_USER = "pavankandula"
         CONTAINER_NAME = "myapp-container"
         EC2_IP = "3.84.245.38"
-        SCANNER_HOME = tool 'mysonar'
+        SCANNER_HOME = tool 'sonar-scanner'
     }
 
     stages {
