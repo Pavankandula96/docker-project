@@ -5,7 +5,7 @@ pipeline {
         IMAGE_NAME = "myapp"
         DOCKERHUB_USER = "pavankandula"
         CONTAINER_NAME = "myapp-container"
-        EC2_IP = "YOUR_EC2_IP"   // CHANGE THIS
+        EC2_IP = 3.84.245.38
     }
 
     stages {
