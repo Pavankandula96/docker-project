@@ -7,6 +7,12 @@ pipeline {
             steps { cleanWs() }
         }
 
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
         stage('Build Docker Image') {
             steps {
                 sh 'docker build -t myapp .'
