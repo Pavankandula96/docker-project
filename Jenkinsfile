@@ -3,8 +3,9 @@ pipeline {
 
     environment {
         IMAGE_NAME = "myapp"
-        DOCKERHUB_USER = "pavankandula"   // CHANGE THIS
+        DOCKERHUB_USER = "pavankandula"
         CONTAINER_NAME = "myapp-container"
+        EC2_IP = "YOUR_EC2_IP"   // CHANGE THIS
     }
 
     stages {
@@ -42,31 +43,37 @@ pipeline {
         stage('Test Container') {
             steps {
                 sh 'sleep 5'
-                sh 'curl -f http://localhost:3000 || exit 1'
+                sh 'curl -f http://localhost:3000'
             }
         }
 
-     stage('Push Image to DockerHub') {
-    steps {
-        script {
-            withDockerRegistry([credentialsId: 'dockerhub-creds']) {
-             sh 'docker tag myapp pavankandula/myapp:latest'
-             sh 'docker push pavankandula/myapp:latest'
+        stage('Push Image to DockerHub') {
+            steps {
+                withCredentials([usernamePassword(
+                    credentialsId: 'dockerhub-creds',
+                    usernameVariable: 'DOCKER_USER',
+                    passwordVariable: 'DOCKER_PASS'
+                )]) {
+                    sh '''
+                    echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
+                    docker tag $IMAGE_NAME $DOCKER_USER/$IMAGE_NAME:latest
+                    docker push $DOCKER_USER/$IMAGE_NAME:latest
+                    '''
+                }
             }
         }
-    }
-         stage('Deploy to EC2') {
-    steps {
-        sh '''
-        ssh ec2-user@YOUR_EC2_IP "
-        docker rm -f myapp-container || true
-        docker pull pavankandula/myapp:latest
-        docker run -d -p 3000:80 --name myapp-container pavankandula/myapp:latest
-        "
-        '''
-    }
-}
-}
+
+        stage('Deploy to EC2') {
+            steps {
+                sh '''
+                ssh -o StrictHostKeyChecking=no ec2-user@$EC2_IP "
+                docker rm -f myapp-container || true
+                docker pull $DOCKERHUB_USER/$IMAGE_NAME:latest
+                docker run -d -p 3000:80 --name myapp-container $DOCKERHUB_USER/$IMAGE_NAME:latest
+                "
+                '''
+            }
+        }
     }
 
     post {
