@@ -46,16 +46,16 @@ pipeline {
             }
         }
 
-        stage('Push Image to DockerHub') {
-            steps {
-                script {
-                    withDockerRegistry([credentialsId: 'dockerhub-creds', url: '']) {
-                        sh 'docker tag $IMAGE_NAME $DOCKERHUB_USER/$IMAGE_NAME:latest'
-                        sh 'docker push $DOCKERHUB_USER/$IMAGE_NAME:latest'
-                    }
-                }
+     stage('Push Image to DockerHub') {
+    steps {
+        script {
+            withDockerRegistry([credentialsId: 'dockerhub-creds']) {
+                sh 'docker tag myapp YOUR_DOCKERHUB/myapp:latest'
+                sh 'docker push YOUR_DOCKERHUB/myapp:latest'
             }
         }
+    }
+}
     }
 
     post {
