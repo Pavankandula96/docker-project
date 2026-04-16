@@ -50,8 +50,8 @@ pipeline {
     steps {
         script {
             withDockerRegistry([credentialsId: 'dockerhub-creds']) {
-                sh 'docker tag myapp YOUR_DOCKERHUB/myapp:latest'
-                sh 'docker push YOUR_DOCKERHUB/myapp:latest'
+             sh 'docker tag myapp pavankandula/myapp:latest'
+             sh 'docker push pavankandula/myapp:latest'
             }
         }
     }
