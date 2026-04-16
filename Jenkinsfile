@@ -22,6 +22,25 @@ pipeline {
             }
         }
 
+        // ✅ ADD HERE (correct position)
+        stage('SonarQube Scan') {
+            steps {
+                withSonarQubeEnv('sonar') {
+                    sh '''
+                    sonar-scanner \
+                    -Dsonar.projectKey=myapp \
+                    -Dsonar.sources=.
+                    '''
+                }
+            }
+        }
+
+        stage('Quality Gate') {
+            steps {
+                waitForQualityGate abortPipeline: true
+            }
+        }
+
         stage('Build Docker Image') {
             steps {
                 sh 'docker build -t $IMAGE_NAME .'
