@@ -55,6 +55,17 @@ pipeline {
             }
         }
     }
+         stage('Deploy to EC2') {
+    steps {
+        sh '''
+        ssh ec2-user@YOUR_EC2_IP "
+        docker rm -f myapp-container || true
+        docker pull pavankandula/myapp:latest
+        docker run -d -p 3000:80 --name myapp-container pavankandula/myapp:latest
+        "
+        '''
+    }
+}
 }
     }
 
