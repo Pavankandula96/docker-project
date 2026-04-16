@@ -7,11 +7,7 @@ pipeline {
             steps { cleanWs() }
         }
 
-        stage('Checkout Code') {
-            steps {
-                git 'https://github.com/Pavankandula96/docker-project.git'
-            }
-        }
+     
 
         stage('Install Dependencies') {
             steps {
