@@ -6,6 +6,7 @@ pipeline {
         DOCKERHUB_USER = "pavankandula"
         CONTAINER_NAME = "myapp-container"
         EC2_IP = "3.84.245.38"
+        SCANNER_HOME = tool 'mysonar'   // 👈 scanner tool name
     }
 
     stages {
@@ -22,15 +23,15 @@ pipeline {
             }
         }
 
-        // ✅ ADD HERE (correct position)
-        stage('SonarQube Scan') {
+        // ✅ Correct SonarQube Integration
+        stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('sonar') {
-                    sh '''
-                    sonar-scanner \
+                withSonarQubeEnv('sonar') {   // 👈 server name from Jenkins
+                    sh """
+                    ${SCANNER_HOME}/bin/sonar-scanner \
                     -Dsonar.projectKey=myapp \
                     -Dsonar.sources=.
-                    '''
+                    """
                 }
             }
         }
