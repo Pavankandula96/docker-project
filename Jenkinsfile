@@ -7,14 +7,6 @@ pipeline {
             steps { cleanWs() }
         }
 
-     
-
-        stage('Install Dependencies') {
-            steps {
-                sh 'npm install || true'
-            }
-        }
-
         stage('Build Docker Image') {
             steps {
                 sh 'docker build -t myapp .'
