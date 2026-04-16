@@ -6,7 +6,7 @@ pipeline {
         DOCKERHUB_USER = "pavankandula"
         CONTAINER_NAME = "myapp-container"
         EC2_IP = "3.84.245.38"
-        SCANNER_HOME = tool 'mysonar'   // 👈 scanner tool name
+        SCANNER_HOME = tool 'mysonar'
     }
 
     stages {
@@ -23,10 +23,9 @@ pipeline {
             }
         }
 
-        // ✅ Correct SonarQube Integration
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('sonar') {   // 👈 server name from Jenkins
+                withSonarQubeEnv('sonar') {
                     sh """
                     ${SCANNER_HOME}/bin/sonar-scanner \
                     -Dsonar.projectKey=myapp \
@@ -38,7 +37,9 @@ pipeline {
 
         stage('Quality Gate') {
             steps {
-                waitForQualityGate abortPipeline: true
+                timeout(time: 5, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
+                }
             }
         }
 
@@ -98,7 +99,9 @@ pipeline {
 
     post {
         always {
-            sh 'docker images | grep myapp || true'
+            script {
+                sh 'docker images | grep myapp || true'
+            }
         }
     }
 }
